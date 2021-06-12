@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="en">
+  <head>
+  	<title>Homepage</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+	<link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
+
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+	
+	<!--Boostrap 4 cdn link -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+		<!-- jQuery library -->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+		<!-- Popper JS -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+		<!-- Latest compiled JavaScript -->
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+		<link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+	    <link rel="icon" type="logo/png" href="img/loginlogo.png">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/all.min.css" integrity="sha512-BnbUDfEUfV0Slx6TunuB042k9tuKe3xrD6q4mg5Ed72LTgzDIcLPxg6yI2gcMFRyomt+yJJxE+zJwNmxki6/RA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="css/style.css">
+		
+    <style>
+		
+        .nav-tabs > li > a { 
+                color:#000 !important;
+                font-weight: 600 !important;
+        }
+	</style>
+	</head>
+    <body onload="getinfo()">
+        <div class="container">
+			<div class="row w-100">
+        <div class="heading w-100 d-flex justify-content-between">
+				<h1 class="display-3 text-center w-100 mb-5 ">All Requests</h1>
+        <a href="/logout"><i class="fas fa-2x fa-sign-out-alt"></i></a>
+        </div>
+
+				
+  <nav class="bg-light w-100 ">
+  <ul class="nav nav-tabs justify-content-around" role="tablist">
+    <li class="nav-item">
+      <a class="nav-link active" data-toggle="tab" href="#get">Read</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" data-toggle="tab" href="#post">Create</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" data-toggle="tab" href="#put">Update</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" data-toggle="tab" href="#delete">Delete</a>
+    </li>
+  </ul>
+</nav>
+
+  <div class="tab-content w-100 ">
+    <div id="get" class="tab-pane  active">
+      <div class="table-responsive">
+				<table class=" text-center table table-striped table-bordered table-hover">
+					<thead>
+						<th>Employee-id</th>
+						<th>Employee_name</th>
+            <th>Gender</th>
+            <th>Employee_File</th>
+					</thead>
+					<tbody id="tablebody">
+
+					</tbody>
+				</table>
+			</div>
+    </div>
+    <div id="post" class="tab-pane fade">
+     	<form enctype="multipart/form-data" action="/employee" method="POST">
+		      		<div class="form-group">
+		      			<input type="text" class="form-control rounded-left" name="empid" placeholder="Employee-id" id="empid" required>
+		      		</div>
+	            <div class="form-group d-flex">
+	              <input type="text" class="form-control rounded-left" name="name" placeholder="Employee-Name" id="name" required>
+	            </div>
+                <div class="form-group d-flex flex-column">
+                <label for="Gender">Select Role:</label>
+	              <select name="gender" id="Gender" class="custom-select" required>
+				            	<option selected>Select Gender</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                   </select>
+	            </div>
+              <div class="form-group d-flex">
+	              <input type="file" class="form-control rounded-left" name="empFile" placeholder="Employee-File" id="empFile" required>
+	            </div>
+
+	            <div class="form-group">
+	            	<button type="submit" class="form-control btn btn-primary rounded submit px-3">Submit</button>
+	            </div>
+	          </form>
+    </div>
+    <div id="put" class="tab-pane fade">
+      <div class="table-responsive">
+				<table class=" text-center table table-striped table-bordered table-hover">
+					<thead>
+						<th>Employee-id</th>
+						<th>Employee_name</th>
+            <th>Gender</th>
+            <th>Employee_File</th>
+					</thead>
+					<tbody>
+            {{#each data}}
+						<tr>
+							<td>{{this.employee_id}}</td>
+							<td>{{this.emp_name}}</td>
+              <td>{{this.gender}}</td>
+							<td><a href={{this.employee_file}} target='_blank'><i class="far fa-file-code"></i></a></td>
+              <td><input type="button" data-toggle="modal" data-target="#myModal" onclick="updatefunc('{{this.employee_id}}')" class="btn btn-success" value="Update"></td>
+						</tr>
+						{{/each}}
+					</tbody>
+				</table>
+			</div>
+     
+    </div>
+
+    <!--Modal for update -->
+    <div class="modal" id="myModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title text-center">Update Information</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+        <form enctype="multipart/form-data" action = "/updateemployee" method="POST" id="updateform">
+			      <div class="form-group">
+              <input type="hidden" id="id" name="id">
+            </div>
+            <div class="form-group">
+              <label for="empid2">Employee_id</label>
+              <input type="text"  name="empid2" id="empid2" class="form-control" readonly>
+            </div>
+            <div class="form-group">
+              <label for="name2">Employee_name</label>
+              <input type="text" name="name2" id="name2" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label for="gender2">Gender</label>
+              <input type="text" name="gender2" id="gender2" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label for="empFile2">Employee_File</label>
+              <input type="file" name="empFile2" id="empFile2" class="form-control" required>
+            </div>
+			<input type="submit" class="btn btn-success" value="Update-Info">
+        </form>
+      </div>
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-danger" data-dismiss="modal">Close</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+    <div id="delete" class="tab-pane fade">
+      <div class="table-responsive">
+				<table class=" text-center table table-striped table-bordered table-hover">
+					<thead>
+						<th>Employee-id</th>
+						<th>Employee_name</th>
+            <th>Gender</th>
+            <th>Employee_File</th>
+					</thead>
+					<tbody>
+            {{#each data}}
+						<tr>
+							<td>{{this.employee_id}}</td>
+							<td>{{this.emp_name}}</td>
+              <td>{{this.gender}}</td>
+							<td><a href={{this.employee_file}} target='_blank'><i class="far fa-file-code"></i></a></td>
+              <td><a class="btn btn-primary" onclick="deletefunc('{{this.employee_id}}')">Delete</a></td>
+						</tr>
+						{{/each}}
+					</tbody>
+				</table>
+			</div>
+    </div>
+  </div>
+
+			</div>
+		</div>
+   
+
+    <script>
+		async function getinfo(){
+      const data = await fetch('/employee',{
+        method:'GET',
+        headers:{
+          'Content-Type':'application/json'
+        }
+      })
+      const res = await data.json();
+      if(res.length<1){
+        alert('No employee exists make a post request');
+      }
+      else{
+        res.map((curele,index)=>{
+          let row = `<tr>
+            <td>${curele.employee_id}</td>
+            <td>${curele.emp_name}</td>
+            <td>${curele.gender}</td>
+            <td><a href=${curele.employee_file} target="_blank"><i class="far fa-file-code"></i></a></td>
+          </tr>`;
+        
+          $('#tablebody').append(row);
+
+        })
+        
+      }
+			
+		}
+    async function deletefunc(val){
+      const response =  await fetch(`/employee/${val}`,{
+         method:'DELETE',
+         headers:{
+          'Content-Type':'application/json'
+        }
+       })
+       const data = await response.json();
+       if(!data){
+         alert('some error occured');
+       }
+       location.reload();
+
+    }
+    async function updatefunc(val){
+      const response =  await fetch(`/employee/${val}`,{
+         method:'GET',
+         headers:{
+          'Content-Type':'application/json'
+        }
+       })
+       const data = await response.json();
+      if(data.length<1){
+        alert('Some error occured');
+      }
+      else{
+        $('#id').val(data._id);
+        $('#empid2').val(data.employee_id);
+        $('#name2').val(data.emp_name);
+        $('#gender2').val(data.gender);
+        $("#empFile").attr("value",`${data.employee_file}`);
+       
+      }
+
+
+    }
+
+    function updatedinfo(val){
+      $('#updateform').attr("action",`/employee/${val}`);
+    }
+	</script>
+    </body>
+    </html>
